@@ -22,6 +22,13 @@ public class Person {
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
 	}
+	
+	public Person(String id, String firstName, String lastName, String phoneNumber) {
+		this.id=id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phoneNumber = phoneNumber;
+	}
 
 	public String getId() {
 		return this.id;

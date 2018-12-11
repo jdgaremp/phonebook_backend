@@ -81,7 +81,7 @@ public class PersonController {
 		return personService.findByFirstName(firstName);
 	}
 
-	@GetMapping("/search?firstname={firstName}&lastname={lastName}&telephone={phoneNumber}")
+	@GetMapping("/search")
 	public List<Person> getPersonsByFirstNameLastNameOrTelephone(@PathVariable("firstName") String firstName, @PathVariable("lastName") String lastName, @PathVariable("phoneNumber") String phoneNumber){
 		List<Person> persons= new ArrayList<>();
 		List<Person> personByFirstName=personService.findByFirstName(firstName);
