@@ -93,6 +93,21 @@ public class PersonControllerTest {
         .andExpect(jsonPath("$[0].phoneNumber", is(person.getPhoneNumber())));
 	}
 	
+	@Test
+	public void search_person_by_last_name() throws Exception {
+		Person person = new Person("0","Sam","Smith","+00 00 000001");
+		List<Person> persons = new ArrayList<>();
+		persons.add(person);
+		when(personService.findByLastName("Smith")).thenReturn(persons);
+		
+		mockMvc.perform(get("/persons/lastname:Smith"))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$", hasSize(1)))
+		.andExpect(jsonPath("$[0].id", is(person.getId())))
+		.andExpect(jsonPath("$[0].firstName", is(person.getFirstName())))
+        .andExpect(jsonPath("$[0].lastName", is(person.getLastName())))
+        .andExpect(jsonPath("$[0].phoneNumber", is(person.getPhoneNumber())));
+	}
 	
 	
 	
