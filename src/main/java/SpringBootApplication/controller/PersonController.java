@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,8 +57,12 @@ public class PersonController {
 	}
 
 	@GetMapping("/{id}")
-	public Optional<Person> getPersonById(@PathVariable("id") String id) {
-		return personService.findById(id);
+	public ResponseEntity<Person> getPersonById(@PathVariable("id") String id) {
+		Optional<Person> personFound = personService.findById(id);
+		if(personFound.isPresent()) {
+			return ResponseEntity.ok(personFound.get());
+		}
+		return ResponseEntity.notFound().build();
 	}
 
 	@GetMapping("/firstname:{firstName}")

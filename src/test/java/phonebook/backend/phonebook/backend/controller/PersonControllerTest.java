@@ -69,6 +69,15 @@ public class PersonControllerTest {
         .andExpect(jsonPath("$.phoneNumber", is(person.getPhoneNumber())));
 	}
 	
+	@Test
+	public void show_nothing_when_person_with_specific_id_does_not_exist() throws Exception {
+		final String ID = "0";
+		when(personService.findById(ID)).thenReturn(Optional.empty());
+		
+		mockMvc.perform(get("/persons/"+ID))
+		.andExpect(status().isNotFound());
+	}
+	
 	
 	
 
