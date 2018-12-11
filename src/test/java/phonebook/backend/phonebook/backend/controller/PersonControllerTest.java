@@ -3,7 +3,8 @@ package phonebook.backend.phonebook.backend.controller;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -57,8 +58,6 @@ public class PersonControllerTest {
 	@Test
 	public void show_one_person_for_specific_id() throws Exception {
 		Person person = new Person("0","Sam","Smith","+00 00 000001");
-		List<Person> persons = new ArrayList<>();
-		persons.add(person);
 		when(personService.findById("0")).thenReturn(Optional.ofNullable(person));
 		
 		mockMvc.perform(get("/persons/0"))
@@ -77,6 +76,24 @@ public class PersonControllerTest {
 		mockMvc.perform(get("/persons/"+ID))
 		.andExpect(status().isNotFound());
 	}
+	
+	@Test
+	public void search_person_by_first_name() throws Exception {
+		Person person = new Person("0","Sam","Smith","+00 00 000001");
+		List<Person> persons = new ArrayList<>();
+		persons.add(person);
+		when(personService.findByFirstName("Sam")).thenReturn(persons);
+		
+		mockMvc.perform(get("/persons/firstname:Sam"))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$", hasSize(1)))
+		.andExpect(jsonPath("$[0].id", is(person.getId())))
+		.andExpect(jsonPath("$[0].firstName", is(person.getFirstName())))
+        .andExpect(jsonPath("$[0].lastName", is(person.getLastName())))
+        .andExpect(jsonPath("$[0].phoneNumber", is(person.getPhoneNumber())));
+	}
+	
+	
 	
 	
 	
