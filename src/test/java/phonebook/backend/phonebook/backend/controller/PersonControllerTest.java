@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +52,21 @@ public class PersonControllerTest {
 		.andExpect(jsonPath("$[0].firstName", is(person.getFirstName())))
         .andExpect(jsonPath("$[0].lastName", is(person.getLastName())))
         .andExpect(jsonPath("$[0].phoneNumber", is(person.getPhoneNumber())));
+	}
+	
+	@Test
+	public void show_one_person_for_specific_id() throws Exception {
+		Person person = new Person("0","Sam","Smith","+00 00 000001");
+		List<Person> persons = new ArrayList<>();
+		persons.add(person);
+		when(personService.findById("0")).thenReturn(Optional.ofNullable(person));
+		
+		mockMvc.perform(get("/persons/0"))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.id", is(person.getId())))
+		.andExpect(jsonPath("$.firstName", is(person.getFirstName())))
+        .andExpect(jsonPath("$.lastName", is(person.getLastName())))
+        .andExpect(jsonPath("$.phoneNumber", is(person.getPhoneNumber())));
 	}
 	
 	
