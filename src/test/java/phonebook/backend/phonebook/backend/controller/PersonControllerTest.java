@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,6 +78,7 @@ public class PersonControllerTest {
 		.andExpect(status().isNotFound());
 	}
 	
+	/*
 	@Test
 	public void search_person_by_first_name() throws Exception {
 		Person person = new Person("0","Sam","Smith","+00 00 000001");
@@ -107,8 +109,57 @@ public class PersonControllerTest {
 		.andExpect(jsonPath("$[0].firstName", is(person.getFirstName())))
         .andExpect(jsonPath("$[0].lastName", is(person.getLastName())))
         .andExpect(jsonPath("$[0].phoneNumber", is(person.getPhoneNumber())));
+	}*/
+	
+	@Test
+	public void search_by_first_name() throws Exception {
+		Person person = new Person("0","Sam","Smith","+00 00 000001");
+		List<Person> persons = new ArrayList<>();
+		persons.add(person);
+		List<HashMap<String,String>> personAttributeTypesToValues = new ArrayList<HashMap<String,String>>();
+		
+		HashMap<String, String> firstNameToValue = new HashMap<String, String>();
+		firstNameToValue.put("firstName","Sam");
+		
+		personAttributeTypesToValues.add(firstNameToValue);
+	
+		when(personService.search(personAttributeTypesToValues)).thenReturn(persons);
+		
+		mockMvc.perform(get("/persons/search?firstName=Sam"))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$", hasSize(1)))
+		.andExpect(jsonPath("$[0].id", is(person.getId())))
+		.andExpect(jsonPath("$[0].firstName", is(person.getFirstName())))
+        .andExpect(jsonPath("$[0].lastName", is(person.getLastName())))
+        .andExpect(jsonPath("$[0].phoneNumber", is(person.getPhoneNumber())));
 	}
 	
+	@Test
+	public void search_by_first_name_and_last_name() throws Exception {
+		Person person = new Person("0","Sam","Smith","+00 00 000001");
+		List<Person> persons = new ArrayList<>();
+		persons.add(person);
+		List<HashMap<String,String>> personAttributeTypesToValues = new ArrayList<HashMap<String,String>>();
+		
+		HashMap<String, String> firstNameToValue = new HashMap<String, String>();
+		firstNameToValue.put("firstName","Sam");
+		
+		HashMap<String, String> lastNameToValue = new HashMap<String, String>();
+		lastNameToValue.put("lastName","Smith");
+		
+		personAttributeTypesToValues.add(lastNameToValue);
+		personAttributeTypesToValues.add(firstNameToValue);
+		
+		when(personService.search(personAttributeTypesToValues)).thenReturn(persons);
+		
+		mockMvc.perform(get("/persons/search?firstName=Sam?lastName=Smith"))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$", hasSize(1)))
+		.andExpect(jsonPath("$[0].id", is(person.getId())))
+		.andExpect(jsonPath("$[0].firstName", is(person.getFirstName())))
+        .andExpect(jsonPath("$[0].lastName", is(person.getLastName())))
+        .andExpect(jsonPath("$[0].phoneNumber", is(person.getPhoneNumber())));
+	}
 	
 	
 	

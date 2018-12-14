@@ -3,6 +3,7 @@ package SpringBootApplication.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -113,7 +114,7 @@ public class PersonService implements PersonRepository {
 
 	@Override
 	public <S extends Person> Page<S> findAll(Example<S> example, Pageable pageable) {
-		return personRepository.findAll(example,pageable);
+		return personRepository.findAll(example, pageable);
 	}
 
 	@Override
@@ -125,13 +126,31 @@ public class PersonService implements PersonRepository {
 	public <S extends Person> boolean exists(Example<S> example) {
 		return personRepository.exists(example);
 	}
-	
 
-	@Override
-	public List<Person> findByLastName(String lastName) {
+	private List<Person> findByLastName(String lastName) {
 		List<Person> persons = new ArrayList<>();
-		for(Person person:findAll()) {
-			if(!lastName.isEmpty() && person.getLastName().toLowerCase().contains(lastName.toLowerCase())) {
+		for (Person person : findAll()) {
+			if (!lastName.isEmpty() && person.getLastName().toLowerCase().contains(lastName.toLowerCase())) {
+				persons.add(person);
+			}
+		}
+		return persons;
+	}
+
+	private List<Person> findByFirstName(String firstName) {
+		List<Person> persons = new ArrayList<>();
+		for (Person person : findAll()) {
+			if (!firstName.isEmpty() && person.getFirstName().toLowerCase().contains(firstName.toLowerCase())) {
+				persons.add(person);
+			}
+		}
+		return persons;
+	}
+
+	private List<Person> findByPhoneNumber(String phoneNumber) {
+		List<Person> persons = new ArrayList<>();
+		for (Person person : findAll()) {
+			if (!phoneNumber.isEmpty() && person.getPhoneNumber().toLowerCase().contains(phoneNumber.toLowerCase())) {
 				persons.add(person);
 			}
 		}
@@ -139,25 +158,45 @@ public class PersonService implements PersonRepository {
 	}
 
 	@Override
-	public List<Person> findByFirstName(String firstName) {
+	public List<Person> search(List<HashMap<String, String>> personAttributeTypesToValues) {
+
 		List<Person> persons = new ArrayList<>();
-		for(Person person:findAll()) {
-			if(!firstName.isEmpty() && person.getFirstName().toLowerCase().contains(firstName.toLowerCase())) {
-				persons.add(person);
+		List<Person> personByFirstName = new ArrayList<>();
+		List<Person> personByLastName = new ArrayList<>();
+		List<Person> personByPhoneNumber = new ArrayList<>();
+		for (HashMap<String, String> personAttributeTypeToValue : personAttributeTypesToValues) {
+			personByFirstName = findByFirstName(personAttributeTypeToValue.get("firstName"));
+			personByLastName = findByLastName(personAttributeTypeToValue.get("lastName"));
+			personByPhoneNumber = findByPhoneNumber(personAttributeTypeToValue.get("phoneNumber"));
+		}
+
+		// if we found the first name searched, check that it is not also a last name
+		searchHasName(persons, personByFirstName, personByLastName);
+
+		// if we found the last name searched, check that it is not also a first name
+		searchHasName(persons, personByLastName, personByFirstName);
+
+		if (!personByPhoneNumber.isEmpty()) {
+			for (Person person : personByPhoneNumber) {
+				if (!persons.contains(person)) {
+					persons.add(person);
+				}
 			}
 		}
 		return persons;
 	}
 
-	@Override
-	public List<Person> findByPhoneNumber(String phoneNumber) {
-		List<Person> persons = new ArrayList<>();
-		for(Person person:findAll()) {
-			if(!phoneNumber.isEmpty() && person.getPhoneNumber().toLowerCase().contains(phoneNumber.toLowerCase())) {
-				persons.add(person);
+	private void searchHasName(List<Person> persons, List<Person> personByFirstName, List<Person> personByLastName) {
+		if (!personByFirstName.isEmpty()) {
+			persons.addAll(personByFirstName);
+			if (!personByLastName.isEmpty()) {
+				for (Person person : personByLastName) {
+					if (!personByFirstName.contains(person)) {
+						persons.add(person);
+					}
+				}
 			}
 		}
-		return persons;
 	}
 
 }
