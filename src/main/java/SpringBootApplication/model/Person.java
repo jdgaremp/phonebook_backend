@@ -1,6 +1,7 @@
 package SpringBootApplication.model;
 
 import javax.persistence.Entity;
+import javax.validation.constraints.Pattern;
 
 import org.springframework.data.annotation.Id;
 
@@ -11,10 +12,16 @@ public class Person {
 
 	private String firstName;
 	private String lastName;
+
+	@Pattern(regexp = "\\+[0-9]+\\s[0-9]+\\s[0-9]{6,}")
 	private String phoneNumber;
 
 	public Person() {
 
+	}
+
+	public Person(String id) {
+		this.id = id;
 	}
 
 	public Person(String firstName, String lastName, String phoneNumber) {
@@ -22,9 +29,9 @@ public class Person {
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
 	}
-	
+
 	public Person(String id, String firstName, String lastName, String phoneNumber) {
-		this.id=id;
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
@@ -46,10 +53,23 @@ public class Person {
 		return this.phoneNumber;
 	}
 
-	@Override
-	public String toString() {
-		return String.format("Person[id=%s, firstName='%s', lastName='%s', phone='%s']", id, firstName, lastName,
-				phoneNumber);
+	public void setId(String id2) {
+		this.id=id2;
+		
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName=firstName;
+		
+	}
+	
+	public void setLastName(String lastName) {
+		this.lastName=lastName;
+		
+	}
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber=phoneNumber;
+		
 	}
 
 }

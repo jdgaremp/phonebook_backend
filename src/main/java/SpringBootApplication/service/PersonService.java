@@ -70,6 +70,17 @@ public class PersonService implements PersonRepository {
 		return personRepository.findById(id);
 	}
 
+	public Person findByIdString(String id) {
+		Person person = null;
+		for (Person p : findAll()) {
+			if (id != null && !id.isEmpty()
+					&& p.getId().toLowerCase().contains(id.toLowerCase())) {
+				person=p;
+			}
+		}
+		return person;
+	}
+
 	@Override
 	public boolean existsById(String id) {
 		return personRepository.existsById(id);
@@ -113,7 +124,7 @@ public class PersonService implements PersonRepository {
 
 	@Override
 	public <S extends Person> Page<S> findAll(Example<S> example, Pageable pageable) {
-		return personRepository.findAll(example,pageable);
+		return personRepository.findAll(example, pageable);
 	}
 
 	@Override
@@ -125,25 +136,32 @@ public class PersonService implements PersonRepository {
 	public <S extends Person> boolean exists(Example<S> example) {
 		return personRepository.exists(example);
 	}
-	
 
 	@Override
-	public List<Person> findByLastName(String lastName) {
+	public List<Person> findByFirstName(String firstName) {
 		List<Person> persons = new ArrayList<>();
-		for(Person person:findAll()) {
-			if(!lastName.isEmpty() && person.getLastName().toLowerCase().contains(lastName.toLowerCase())) {
-				persons.add(person);
+		String[] firstNameSplited = firstName.split(" ");
+		for (int i = 0; i < firstNameSplited.length; i++) {
+			for (Person person : findAll()) {
+				if (firstNameSplited[0] != null && !firstNameSplited[0].isEmpty()
+						&& person.getFirstName().toLowerCase().contains(firstNameSplited[0].toLowerCase())) {
+					persons.add(person);
+				}
 			}
 		}
 		return persons;
 	}
 
 	@Override
-	public List<Person> findByFirstName(String firstName) {
+	public List<Person> findByLastName(String lastName) {
 		List<Person> persons = new ArrayList<>();
-		for(Person person:findAll()) {
-			if(!firstName.isEmpty() && person.getFirstName().toLowerCase().contains(firstName.toLowerCase())) {
-				persons.add(person);
+		String[] lastNameSplited = lastName.split(" ");
+		for (int i = 0; i < lastNameSplited.length; i++) {
+			for (Person person : findAll()) {
+				if (!lastNameSplited[0].isEmpty()
+						&& person.getLastName().toLowerCase().contains(lastNameSplited[0].toLowerCase())) {
+					persons.add(person);
+				}
 			}
 		}
 		return persons;
@@ -152,12 +170,20 @@ public class PersonService implements PersonRepository {
 	@Override
 	public List<Person> findByPhoneNumber(String phoneNumber) {
 		List<Person> persons = new ArrayList<>();
-		for(Person person:findAll()) {
-			if(!phoneNumber.isEmpty() && person.getPhoneNumber().toLowerCase().contains(phoneNumber.toLowerCase())) {
-				persons.add(person);
+		String[] phoneNumberSplited = phoneNumber.split(" ");
+		for (int i = 0; i < phoneNumberSplited.length; i++) {
+			for (Person person : findAll()) {
+				if (phoneNumberSplited[0] != null && !phoneNumberSplited[0].isEmpty()
+						&& person.getPhoneNumber().toLowerCase().contains(phoneNumberSplited[0].toLowerCase())) {
+					persons.add(person);
+				}
 			}
 		}
 		return persons;
+	}
+
+	public void find(String firstName, String lastName, String phoneNumber) {
+
 	}
 
 }

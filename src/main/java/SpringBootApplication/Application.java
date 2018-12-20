@@ -10,7 +10,7 @@ import SpringBootApplication.controller.PersonController;
 
 
 @SpringBootApplication
-@ComponentScan
+@ComponentScan()
 public class Application implements CommandLineRunner {
 	
 	@Autowired
