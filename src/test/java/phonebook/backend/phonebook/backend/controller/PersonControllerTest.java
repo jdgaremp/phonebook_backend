@@ -108,9 +108,4 @@ public class PersonControllerTest {
         .andExpect(jsonPath("$[0].lastName", is(person.getLastName())))
         .andExpect(jsonPath("$[0].phoneNumber", is(person.getPhoneNumber())));
 	}
-	
-	
-	
-	
-
 }
